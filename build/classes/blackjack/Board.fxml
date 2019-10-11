@@ -10,16 +10,16 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<GridPane hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="800.0" stylesheets="@../assets/Login.css" vgap="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="blackjack.BoardController">
+<GridPane hgap="10.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="800.0" stylesheets="@../assets/Login.css" vgap="10.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="blackjack.BoardController">
   <columnConstraints>
     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
   </columnConstraints>
   <rowConstraints>
-    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="155.0" minHeight="10.0" prefHeight="82.0" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="293.0" minHeight="30.0" prefHeight="221.0" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="177.0" minHeight="20.0" prefHeight="177.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
       <StackPane fx:id="leftBox" prefHeight="150.0" prefWidth="200.0" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
@@ -47,21 +47,24 @@
                </children>
             </HBox>
             <Button fx:id="deal" mnemonicParsing="false" onAction="#handleDeal" prefWidth="120.0" text="DEAL" />
+            <ComboBox fx:id="betCombo" prefWidth="120.0" />
          </children>
       </VBox>
-      <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" GridPane.rowIndex="2">
+      <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" spacing="10.0" GridPane.rowIndex="2">
          <children>
             <Label fx:id="humanSum" />
+            <Label fx:id="humanAccount" />
             <Label fx:id="humanWin" />
          </children>
          <padding>
             <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />
          </padding>
       </VBox>
-      <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
+      <VBox alignment="CENTER_LEFT" prefHeight="200.0" prefWidth="100.0" spacing="10.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
          <children>
             <Label fx:id="cpuSum" />
             <Label fx:id="cpuWin" />
+            <Button fx:id="reset" mnemonicParsing="false" onAction="#handleResetGame" prefWidth="100.0" text="Reset Game" visible="false" />
          </children>
          <GridPane.margin>
             <Insets />

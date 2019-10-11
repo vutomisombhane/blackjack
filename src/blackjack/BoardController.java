@@ -8,6 +8,7 @@ package blackjack;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.ResourceBundle;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -16,6 +17,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -33,6 +35,7 @@ public class BoardController implements Initializable {
     /**
      * Initializes the controller class.
      */
+    @FXML private int accountBalance;
     @FXML private ImageView playerCard;
     @FXML private ImageView cpuCard;
     @FXML private ImageView deck;
@@ -42,7 +45,7 @@ public class BoardController implements Initializable {
     @FXML private StackPane centerBox;
     @FXML private StackPane bottomPane;
     
-    @FXML private Button hit, stand, deal;
+    @FXML private Button hit, stand, deal, reset;
     @FXML HBox buttonBox;
     
     @FXML private Label humanSum;
@@ -51,6 +54,7 @@ public class BoardController implements Initializable {
     
     @FXML private Label cpuSum;
     @FXML private Label cpuWin;
+    @FXML private ComboBox betCombo;
     
     @FXML
     private void handleUserHit(ActionEvent event){
@@ -59,6 +63,9 @@ public class BoardController implements Initializable {
     
     @FXML
     private void handleDeal(ActionEvent event){
+        
+        accountBalance -= Integer.parseInt(betCombo.getValue().toString());
+        humanAccount.setText("R" + accountBalance + " left");
         leftBox.getChildren().clear();
         rightBox.getChildren().clear();
         humanSum.setText("");
@@ -68,6 +75,7 @@ public class BoardController implements Initializable {
         initializeGame();
         buttonBox.setDisable(false);
         deal.setDisable(true);
+        betCombo.setDisable(true);
     }
     @FXML
     private void handleUserStand(ActionEvent event){
@@ -82,18 +90,44 @@ public class BoardController implements Initializable {
             }
         }
     }
+    @FXML
+    private void handleResetGame(){
+        accountBalance = 1000;
+        humanAccount.setText("R" + accountBalance + " left");
+        deal.setDisable(false);
+        betCombo.setDisable(false);
+        reset.setVisible(false);
+        updateComboOptions();
+    }
     private Game game;
-    
+    private void updateComboOptions(){
+        int[] arr = new int[]{50, 100, 150, 200, 300};
+        int c = Integer.parseInt(betCombo.getValue().toString());
+        betCombo.getItems().clear();
+        for(int a : arr){
+            if ( a <= accountBalance){
+                betCombo.getItems().add(a);
+            }
+        }
+        if ( betCombo.getItems().size() > 1 ){
+            betCombo.setValue(100);
+        }else{
+            betCombo.setValue(50);
+        }
+        if ( c <= accountBalance){
+            betCombo.setValue(c);
+        }
+    }
     public void endGame(Player player, int res){
         game.setRun(false);
         String humanRes = "";
         String cpuRes = "";
         if ( res == 1 ){
            if ( player.getName().equals("You")){
-               humanRes = "WINNER";
+               humanRes = "BLACKJACK";
                cpuRes = "LOSER";
            } else{
-               cpuRes = "WINNER";
+               cpuRes = "BLACKJACK";
                humanRes = "LOSER";
            }
         }
@@ -101,10 +135,10 @@ public class BoardController implements Initializable {
             // player won with res = -1
             if ( player.getName().equals("Dealer")){
                humanRes = "WINNER";
-               cpuRes = "LOSER";
+               cpuRes = "BUST";
            } else{
                cpuRes = "WINNER";
-               humanRes = "LOSER";
+               humanRes = "BUST";
            }
         }
         if ( res == 0 ){
@@ -113,6 +147,8 @@ public class BoardController implements Initializable {
                 // it's a ties
                 cpuRes = "IT'S A TIE";
                 humanRes = "IT'S A TIE";
+                
+                accountBalance += Integer.parseInt(betCombo.getValue().toString());
             }else if ( game.getHuman().getSum() > game.getCpu().getSum()){
                 // human wins
                 humanRes = "WINNER";
@@ -122,6 +158,10 @@ public class BoardController implements Initializable {
                 cpuRes = "WINNER";
                 humanRes = "LOSER";
             }
+        }
+        
+        if (humanRes.equals("WINNER") || humanRes.equals("BLACKJACK")){
+            accountBalance += 2 * Integer.parseInt(betCombo.getValue().toString());
         }
         Player cpu = game.getCpu();
         System.out.println(Arrays.toString(cpu.getListCards().toArray()));
@@ -135,10 +175,19 @@ public class BoardController implements Initializable {
         
         humanWin.setText(humanRes);
         cpuWin.setText(cpuRes);
-        deal.setDisable(false);
+        humanAccount.setText("R" + accountBalance + " left");
+        if ( accountBalance > 0){
+            deal.setDisable(false);
+            betCombo.setDisable(false);
+            updateComboOptions();
+        }else{
+            reset.setVisible(true);
+        }
+        
     }
     public void initializeGame(){
         game = new Game();
+        
         //initialCards
         userHit();
         cpuHit();
@@ -146,7 +195,11 @@ public class BoardController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
+        accountBalance = 1000;
+        betCombo.setValue(100);
+        updateComboOptions();
         
+        humanAccount.setText("R" + accountBalance + " left");
     }
     public void userHit(){
         int res  = game.hit(game.getHuman());
